@@ -101,6 +101,7 @@ private:
   double payload_mass_{0.20};
   double gravity_{9.81};
   double cable_length_{0.88};
+  Eigen::Vector3d payload_damping_{Eigen::Vector3d::Zero()};
 
   double tau_min_{0.10};
   double force_min_{0.20};
@@ -123,7 +124,7 @@ private:
   double publish_rate_{100.0};
 
   bool use_force_update_{true};
-  bool use_tension_update_{false};
+  bool use_tension_update_{true};
 
   // Discrete process/measurement tuning.
   double q_n_x_{1e-5};

@@ -29,6 +29,13 @@ PayloadEstimatorNodelet::PayloadEstimatorNodelet(
 
   declareAndReadParam("gravity", gravity_, "%.6f");
   declareAndReadParam("cable_length", cable_length_, "%.6f");
+  declareAndReadParam("ekf_payload.payload_damping_x", payload_damping_.x(),
+                      "%.6f");
+  declareAndReadParam("ekf_payload.payload_damping_y", payload_damping_.y(),
+                      "%.6f");
+  declareAndReadParam("ekf_payload.payload_damping_z", payload_damping_.z(),
+                      "%.6f");
+  payload_damping_ = payload_damping_.cwiseMax(Eigen::Vector3d::Zero());
 
   declareAndReadParam("ixx", inertia_(0, 0), "%.6f");
   declareAndReadParam("iyy", inertia_(1, 1), "%.6f");
@@ -470,12 +477,14 @@ void PayloadEstimatorNodelet::predictFilter(double dt,
     if (nn.norm() > 1e-9) {
       nn.normalize();
     }
-    Eigen::Vector3d qq =
-        (Eigen::Matrix3d::Identity() - nn * nn.transpose()) * qi;
+    const Eigen::Matrix3d Pt =
+        Eigen::Matrix3d::Identity() - nn * nn.transpose();
+    Eigen::Vector3d qq = Pt * qi;
+    const Eigen::Vector3d damping = Pt * payload_damping_.asDiagonal() * qq;
     ndot = qq;
     qdot = (1.0 / cable_length_) *
                ((nn * nn.transpose() - Eigen::Matrix3d::Identity()) * A_world) -
-           qq.squaredNorm() * nn;
+           qq.squaredNorm() * nn - damping;
   };
 
   Eigen::Vector3d k1n, k1q, k2n, k2q, k3n, k3q, k4n, k4q;
@@ -499,7 +508,9 @@ void PayloadEstimatorNodelet::predictFilter(double dt,
       (1.0 / cable_length_) *
           (n * A_world.transpose() + alpha * Eigen::Matrix3d::Identity()) -
       beta * Eigen::Matrix3d::Identity();
+  const Eigen::Matrix3d Pt = Eigen::Matrix3d::Identity() - n * n.transpose();
   F.block<3, 3>(3, 3) = -2.0 * n * q.transpose();
+  F.block<3, 3>(3, 3) -= Pt * payload_damping_.asDiagonal() * Pt;
 
   const Eigen::Matrix<double, 10, 10> Phi =
       Eigen::Matrix<double, 10, 10>::Identity() + F * dt;
