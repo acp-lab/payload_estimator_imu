@@ -101,7 +101,7 @@ private:
   double payload_mass_{0.20};
   double gravity_{9.81};
   double cable_length_{0.88};
-  Eigen::Vector3d payload_damping_{Eigen::Vector3d::Zero()};
+  Eigen::Vector3d payload_damping_{Eigen::Vector3d::Constant(0.1)};
 
   double tau_min_{0.10};
   double force_min_{0.20};
