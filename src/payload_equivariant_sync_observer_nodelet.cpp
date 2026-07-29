@@ -16,7 +16,7 @@ PayloadSyncEquivariantObserverVerifiedNodelet::
   mass_ = 1.24;
   payload_mass_ = 0.20;
   gravity_ = 9.81;
-  cable_length_ = 0.76;
+  cable_length_ = 1.0;
   inertia_.setZero();
   inertia_(0, 0) = 0.00360915;
   inertia_(1, 1) = 0.00188875;

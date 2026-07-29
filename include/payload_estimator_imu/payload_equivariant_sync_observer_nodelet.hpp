@@ -92,7 +92,7 @@ private:
   double mass_{1.24};
   double payload_mass_{0.20};
   double gravity_{9.81};
-  double cable_length_{0.76};
+  double cable_length_{1.0};
 
   double thrust_scale_{1.0};
   double thrust_offset_{0.0};
