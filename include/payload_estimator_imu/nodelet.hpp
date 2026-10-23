@@ -124,7 +124,7 @@ private:
   double publish_rate_{100.0};
 
   bool use_force_update_{true};
-  bool use_tension_update_{true};
+  bool use_tension_update_{false};
 
   // Discrete process/measurement tuning.
   double q_n_x_{1e-5};
@@ -154,7 +154,6 @@ private:
 
   double p0_b_force_{2.00};
 
-  std::string frame_id_{"world"};
   Eigen::Matrix3d inertia_{Eigen::Matrix3d::Zero()};
 
   // Cached measurements.

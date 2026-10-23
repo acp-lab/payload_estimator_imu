@@ -402,7 +402,9 @@ void PayloadEstimatorNodelet::publishTimerCallback() {
 
   nav_msgs::msg::Odometry payload_odom_msg;
   payload_odom_msg.header.stamp = stamp;
-  payload_odom_msg.header.frame_id = frame_id_;
+  // Position, velocity and cable direction use the input odometry's inertial
+  // frame. The global converter supplies world; legacy launches may use map.
+  payload_odom_msg.header.frame_id = odom->header.frame_id;
   payload_odom_msg.child_frame_id = "payload_estimated";
   payload_odom_msg.pose.pose.position.x = p_payload_est.x();
   payload_odom_msg.pose.pose.position.y = p_payload_est.y();
